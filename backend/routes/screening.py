@@ -114,6 +114,46 @@ def fetch_candidate(cid):
         return jsonify({"error": "Not found"}), 404
     return jsonify(c)
 
+@screen_bp.post("/api/candidates/<cid>/interview-rating")
+def save_interview_rating(cid):
+
+    candidate = get_candidate(cid)
+
+    if not candidate:
+        return jsonify({
+            "error": "Not found"
+        }), 404
+
+    data = request.get_json(force=True)
+
+    question_id = data.get("question_id")
+    competency = data.get("competency")
+    score = data.get("score")
+
+    if competency is None or score is None:
+        return jsonify({
+            "error": "Invalid payload"
+        }), 400
+
+    profile = candidate.setdefault(
+        "interview_profile",
+        {}
+    )
+
+    profile.setdefault(
+        competency,
+        {}
+    )
+
+    profile[competency][
+        str(question_id)
+    ] = score
+
+    return jsonify({
+        "success": True,
+        "profile": profile
+    })
+
 
 @screen_bp.get("/api/stats")
 def stats():
