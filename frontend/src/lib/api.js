@@ -7,11 +7,14 @@ export const getRoles = () => api.get("/api/roles").then((r) => r.data);
 
 export const getRole = (id) => api.get(`/api/roles/${id}`).then((r) => r.data);
 
-export const createRole = (data) => api.post("/api/roles", data).then((r) => r.data);
+export const createRole = (data) =>
+  api.post("/api/roles", data).then((r) => r.data);
 
-export const updateRole = (id, data) => api.put(`/api/roles/${id}`, data).then((r) => r.data);
+export const updateRole = (id, data) =>
+  api.put(`/api/roles/${id}`, data).then((r) => r.data);
 
-export const deleteRole = (id) => api.delete(`/api/roles/${id}`).then((r) => r.data);
+export const deleteRole = (id) =>
+  api.delete(`/api/roles/${id}`).then((r) => r.data);
 
 export const suggestSkills = (roleId, jobTitle) =>
   api
@@ -35,8 +38,25 @@ export const getCandidates = (roleId) =>
     .get("/api/candidates", { params: roleId ? { role_id: roleId } : {} })
     .then((r) => r.data);
 
-export const getCandidate = (id) => api.get(`/api/candidates/${id}`).then((r) => r.data);
+export const getCandidate = (id) =>
+  api.get(`/api/candidates/${id}`).then((r) => r.data);
 
 export const getStats = () => api.get("/api/stats").then((r) => r.data);
+
+export async function autoGenerateRole(job_title) {
+  const r = await fetch("http://localhost:5000/api/roles/auto-generate", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ job_title }),
+  });
+
+  if (!r.ok) {
+    throw new Error("Auto-generation failed");
+  }
+
+  return r.json();
+}
 
 export default api;

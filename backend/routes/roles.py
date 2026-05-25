@@ -3,7 +3,10 @@ from models.store import (
     create_role, get_all_roles, get_role,
     update_role, delete_role,
 )
-from services.scraper import suggest_skills
+from services.scraper import suggest_skills, collect_market_text
+from services.llm import generate_role_config
+
+
 
 roles_bp = Blueprint("roles", __name__)
 
@@ -56,3 +59,33 @@ def skill_suggestions(role_id):
         return jsonify({"error": "job_title required"}), 400
     skills = suggest_skills(job_title)
     return jsonify({"suggested_skills": skills})
+
+
+@roles_bp.post("/api/roles/auto-generate")
+def auto_generate_role():
+    data = request.get_json(force=True)
+
+    job_title = data.get("job_title", "").strip()
+
+    if not job_title:
+        return jsonify({"error": "job_title required"}), 400
+
+    try:
+        market_text = collect_market_text(job_title)
+
+        if not market_text.strip():
+            return jsonify({
+                "error": "No market data found"
+            }), 400
+
+        result = generate_role_config(
+            job_title,
+            market_text
+        )
+
+        return jsonify(result)
+
+    except Exception as e:
+        return jsonify({
+            "error": str(e)
+        }), 500

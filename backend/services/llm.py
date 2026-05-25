@@ -160,3 +160,57 @@ Focus on: top strengths, key gaps, and overall recommendation. Be direct.
 Return plain text only, no JSON.
 """
     return _chat([{"role": "user", "content": prompt}], max_tokens=256)
+
+
+# ---------------------------------------------------------------------------
+# LLM Call 5 — Role auto-generation
+# ---------------------------------------------------------------------------
+
+def generate_role_config(job_title: str, market_text: str) -> dict:
+    """
+    Generate role description + scoring config from market job postings.
+    """
+
+    prompt = f"""
+You are a senior technical recruiter and hiring manager.
+
+Based on these job postings for "{job_title}", generate an ATS-ready role configuration.
+
+Return ONLY valid JSON:
+
+{{
+  "description": "<2-4 sentence job description>",
+  "skills": [
+    {{
+      "name": "Python",
+      "weight": 90,
+      "required": true
+    }}
+  ],
+  "experience_band": <0-3>,
+  "threshold": <50-95>
+}}
+
+Rules:
+
+- 6-10 skills
+- weights 20-100
+- 2-4 skills required=true
+- experience_band:
+  0 = 0-2 yrs
+  1 = 3-4 yrs
+  2 = 5-7 yrs
+  3 = 8+ yrs
+- threshold realistic for market
+
+Job postings:
+{market_text[:6000]}
+"""
+
+    raw = _chat(
+        [{"role": "user", "content": prompt}],
+        max_tokens=1200,
+        temperature=0.3,
+    )
+
+    return _extract_json(raw)

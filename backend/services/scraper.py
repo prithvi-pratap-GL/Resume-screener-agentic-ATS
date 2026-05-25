@@ -89,3 +89,14 @@ def suggest_skills(job_title: str) -> list[str]:
     counts = Counter(found)
     # Return top 15 by frequency
     return [skill for skill, _ in counts.most_common(15)]
+
+
+def collect_market_text(job_title: str) -> str:
+    """
+    Aggregate market job descriptions for LLM synthesis.
+    """
+    return (
+        _scrape_remotive(job_title)
+        + " "
+        + _scrape_indeed(job_title)
+    )
