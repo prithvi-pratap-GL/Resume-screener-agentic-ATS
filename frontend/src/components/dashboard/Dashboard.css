@@ -1,0 +1,121 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  border-bottom: 0.5px solid #e0dfd8;
+  background: #fff;
+}
+.page-title {
+  font-size: 14px;
+  font-weight: 500;
+}
+.topbar-actions {
+  display: flex;
+  gap: 8px;
+}
+.content {
+  padding: 16px 20px;
+  flex: 1;
+  overflow: auto;
+}
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.pipeline-panels {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 12px;
+}
+.panel {
+  background: #fff;
+  border: 0.5px solid #e0dfd8;
+  border-radius: 12px;
+  overflow: hidden;
+}
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 0.5px solid #e0dfd8;
+}
+.panel-title {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.filter-tabs {
+  display: flex;
+  gap: 0;
+}
+.filter-tab {
+  padding: 4px 10px;
+  font-size: 12px;
+  color: #888;
+  background: none;
+  border: none;
+  cursor: pointer;
+  border-radius: 6px;
+}
+.filter-tab.active {
+  background: #e6f1fb;
+  color: #0c447c;
+  font-weight: 500;
+}
+
+.table-head {
+  display: grid;
+  grid-template-columns: 36px 1fr 110px 80px 90px;
+  gap: 10px;
+  padding: 8px 16px;
+  background: #faf9f7;
+  border-bottom: 0.5px solid #e0dfd8;
+  font-size: 11px;
+  color: #aaa;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.candidate-row {
+  display: grid;
+  grid-template-columns: 36px 1fr 110px 80px 90px;
+  gap: 10px;
+  align-items: center;
+  padding: 10px 16px;
+  border-bottom: 0.5px solid #f0efe9;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+.candidate-row:last-child {
+  border-bottom: none;
+}
+.candidate-row:hover {
+  background: #faf9f7;
+}
+.candidate-row.selected {
+  background: #f0f5fb;
+}
+.cname {
+  font-size: 13px;
+  font-weight: 500;
+}
+.crole {
+  font-size: 11px;
+  color: #888;
+  margin-top: 1px;
+}
+.exp-text {
+  font-size: 12px;
+  color: #888;
+}

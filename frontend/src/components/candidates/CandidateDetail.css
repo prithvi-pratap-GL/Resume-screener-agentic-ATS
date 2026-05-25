@@ -1,0 +1,126 @@
+.detail-wrap {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
+}
+.detail-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 0.5px solid #e0dfd8;
+}
+.detail-name {
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 3px;
+}
+.detail-role {
+  font-size: 12px;
+  color: #888;
+}
+.detail-rings {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  padding: 16px;
+  border-bottom: 0.5px solid #e0dfd8;
+}
+.detail-section {
+  padding: 12px 16px;
+  border-bottom: 0.5px solid #e0dfd8;
+}
+.detail-section:last-child {
+  border-bottom: none;
+}
+.detail-sec-title {
+  font-size: 11px;
+  color: #aaa;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 8px;
+}
+.detail-sec-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.detail-count {
+  font-size: 11px;
+  color: #888;
+}
+.detail-summary {
+  font-size: 12px;
+  color: #444;
+  line-height: 1.6;
+}
+
+.skill-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+.skill-tag {
+  font-size: 11px;
+  padding: 3px 8px;
+  border: 0.5px solid #ddd;
+  border-radius: 999px;
+  color: #555;
+}
+
+.q-card {
+  padding: 8px 0;
+  border-bottom: 0.5px solid #f0efe9;
+}
+.q-card:last-child {
+  border-bottom: none;
+}
+.q-type {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #aaa;
+  margin-bottom: 4px;
+}
+.q-text {
+  font-size: 12px;
+  color: #1a1a1a;
+  line-height: 1.5;
+}
+.q-followup {
+  font-size: 11px;
+  color: #888;
+  margin-top: 4px;
+  font-style: italic;
+}
+.q-more {
+  font-size: 12px;
+  color: #185fa5;
+  margin-top: 6px;
+}
+
+.rejection-reason {
+  font-size: 12px;
+  color: #444;
+  line-height: 1.6;
+  margin-bottom: 8px;
+}
+.improvement-list {
+  list-style: none;
+  padding: 0;
+}
+.improvement-list li {
+  font-size: 12px;
+  color: #555;
+  padding: 4px 0;
+  padding-left: 14px;
+  position: relative;
+}
+.improvement-list li::before {
+  content: "→";
+  position: absolute;
+  left: 0;
+  color: #185fa5;
+}

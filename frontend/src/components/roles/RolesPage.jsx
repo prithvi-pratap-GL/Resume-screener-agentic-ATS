@@ -1,0 +1,107 @@
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { getRoles, createRole, deleteRole } from '../../lib/api';
+import { Badge, EmptyState, Spinner } from '../layout/UI';
+import { Plus, Trash2, Settings, BriefcaseBusiness } from 'lucide-react';
+import './RolesPage.css';
+
+export default function RolesPage() {
+  const navigate = useNavigate();
+  const [roles, setRoles] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [showForm, setShowForm] = useState(false);
+  const [form, setForm] = useState({ title: '', department: '', description: '' });
+  const [saving, setSaving] = useState(false);
+
+  const load = () => getRoles().then(r => { setRoles(r); setLoading(false); });
+  useEffect(() => { load(); }, []);
+
+  const handleCreate = async (e) => {
+    e.preventDefault();
+    setSaving(true);
+    await createRole(form);
+    setForm({ title: '', department: '', description: '' });
+    setShowForm(false);
+    setSaving(false);
+    load();
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm('Delete this role?')) return;
+    await deleteRole(id);
+    load();
+  };
+
+  if (loading) return <div style={{display:'flex',alignItems:'center',justifyContent:'center',height:'60vh'}}><Spinner /></div>;
+
+  return (
+    <div className="page">
+      <div className="topbar">
+        <div className="page-title">Job roles</div>
+        <button className="btn btn-primary" onClick={() => setShowForm(true)}><Plus size={14}/> New role</button>
+      </div>
+      <div className="content">
+        {showForm && (
+          <div className="role-form-card">
+            <div className="form-title">Create new role</div>
+            <form onSubmit={handleCreate} className="role-form">
+              <div className="form-row">
+                <label>Role title</label>
+                <input required placeholder="e.g. Senior ML Engineer" value={form.title} onChange={e => setForm(f=>({...f,title:e.target.value}))} />
+              </div>
+              <div className="form-row">
+                <label>Department</label>
+                <input placeholder="e.g. Engineering" value={form.department} onChange={e => setForm(f=>({...f,department:e.target.value}))} />
+              </div>
+              <div className="form-row">
+                <label>Description</label>
+                <textarea rows={3} placeholder="Brief role description…" value={form.description} onChange={e => setForm(f=>({...f,description:e.target.value}))} />
+              </div>
+              <div className="form-actions">
+                <button type="submit" className="btn btn-primary" disabled={saving}>{saving ? 'Creating…' : 'Create role'}</button>
+                <button type="button" className="btn" onClick={() => setShowForm(false)}>Cancel</button>
+              </div>
+            </form>
+          </div>
+        )}
+
+        {roles.length === 0 && !showForm
+          ? <EmptyState icon={<BriefcaseBusiness size={32} />} title="No roles yet" desc="Create a job role to start screening resumes" action={<button className="btn btn-primary" onClick={() => setShowForm(true)}><Plus size={14}/> Create role</button>} />
+          : <div className="roles-grid">
+              {roles.map(r => (
+                <div key={r.id} className="role-card">
+                  <div className="role-card-header">
+                    <div>
+                      <div className="role-title">{r.title}</div>
+                      <div className="role-dept">{r.department || '—'}</div>
+                    </div>
+                    <Badge status={r.scoring_config?.skills?.length > 0 ? 'Active' : 'Draft'} />
+                  </div>
+                  {r.description && <div className="role-desc">{r.description}</div>}
+                  <div className="role-skills">
+                    {(r.scoring_config?.skills || []).slice(0, 5).map(s => (
+                      <span key={s.name} className="skill-tag">{s.name}</span>
+                    ))}
+                    {(r.scoring_config?.skills || []).length > 5 && (
+                      <span className="skill-tag">+{r.scoring_config.skills.length - 5} more</span>
+                    )}
+                    {(r.scoring_config?.skills || []).length === 0 && (
+                      <span style={{fontSize:11,color:'#aaa'}}>No skills configured yet</span>
+                    )}
+                  </div>
+                  <div className="role-meta">
+                    <span>Threshold: {r.scoring_config?.threshold ?? 75}%</span>
+                    <span>Updated {new Date(r.updated_at).toLocaleDateString()}</span>
+                  </div>
+                  <div className="role-actions">
+                    <button className="btn" onClick={() => navigate(`/roles/${r.id}/scoring`)}><Settings size={13}/> Configure scoring</button>
+                    <button className="btn btn-danger" onClick={() => handleDelete(r.id)}><Trash2 size={13}/></button>
+                  </div>
+                </div>
+              ))}
+            </div>
+        }
+      </div>
+    </div>
+  );
+}

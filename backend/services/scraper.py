@@ -1,0 +1,91 @@
+"""
+Scrape job boards for skill suggestions given a job title.
+Returns a deduplicated list of frequently-mentioned skills.
+"""
+import re
+import requests
+from collections import Counter
+from bs4 import BeautifulSoup
+
+HEADERS = {
+    "User-Agent": (
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) "
+        "Chrome/124.0 Safari/537.36"
+    )
+}
+
+# Common tech skills to detect in scraped text
+SKILL_PATTERNS = [
+    "python","java","javascript","typescript","go","rust","c\\+\\+","c#","ruby","scala",
+    "react","angular","vue","node\\.js","django","flask","fastapi","spring",
+    "sql","postgresql","mysql","mongodb","redis","elasticsearch","cassandra",
+    "aws","gcp","azure","docker","kubernetes","terraform","ansible","jenkins","ci/cd",
+    "machine learning","deep learning","nlp","pytorch","tensorflow","scikit-learn",
+    "spark","hadoop","kafka","airflow","dbt","mlops","llm","rag",
+    "git","linux","bash","rest api","graphql","microservices","system design",
+    "data structures","algorithms","agile","scrum",
+]
+
+_COMPILED = [re.compile(r'\b' + p + r'\b', re.IGNORECASE) for p in SKILL_PATTERNS]
+_SKILL_NAMES = [
+    "Python","Java","JavaScript","TypeScript","Go","Rust","C++","C#","Ruby","Scala",
+    "React","Angular","Vue","Node.js","Django","Flask","FastAPI","Spring",
+    "SQL","PostgreSQL","MySQL","MongoDB","Redis","Elasticsearch","Cassandra",
+    "AWS","GCP","Azure","Docker","Kubernetes","Terraform","Ansible","Jenkins","CI/CD",
+    "Machine Learning","Deep Learning","NLP","PyTorch","TensorFlow","Scikit-learn",
+    "Spark","Hadoop","Kafka","Airflow","dbt","MLOps","LLM","RAG",
+    "Git","Linux","Bash","REST API","GraphQL","Microservices","System Design",
+    "Data Structures","Algorithms","Agile","Scrum",
+]
+
+
+def _extract_skills_from_text(text: str) -> list[str]:
+    found = []
+    for i, pat in enumerate(_COMPILED):
+        if pat.search(text):
+            found.append(_SKILL_NAMES[i])
+    return found
+
+
+def _scrape_indeed(job_title: str) -> str:
+    query = job_title.replace(" ", "+")
+    url = f"https://www.indeed.com/jobs?q={query}&l=Remote"
+    try:
+        r = requests.get(url, headers=HEADERS, timeout=8)
+        soup = BeautifulSoup(r.text, "html.parser")
+        cards = soup.find_all("div", class_=re.compile("job_seen_beacon|jobsearch-SerpJobCard"))
+        return " ".join(c.get_text(" ") for c in cards[:10])
+    except Exception:
+        return ""
+
+
+def _scrape_remotive(job_title: str) -> str:
+    """Remotive has a public API — no scraping needed."""
+    try:
+        r = requests.get(
+            "https://remotive.com/api/remote-jobs",
+            params={"search": job_title, "limit": 20},
+            timeout=8,
+        )
+        jobs = r.json().get("jobs", [])
+        return " ".join(j.get("description", "") for j in jobs[:10])
+    except Exception:
+        return ""
+
+
+def suggest_skills(job_title: str) -> list[str]:
+    """
+    Scrape multiple sources and return top skills by frequency.
+    Falls back gracefully if sources are unavailable.
+    """
+    text = _scrape_remotive(job_title) + " " + _scrape_indeed(job_title)
+
+    if not text.strip():
+        # Offline fallback: return generic senior-role skills
+        return ["Python", "System Design", "SQL", "Docker", "Git", "REST API", "Agile"]
+
+    found = _extract_skills_from_text(text)
+    counts = Counter(found)
+    # Return top 15 by frequency
+    return [skill for skill, _ in counts.most_common(15)]

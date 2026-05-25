@@ -1,0 +1,162 @@
+"""
+LLM calls via the OpenAI-compatible HuggingFace Inference API.
+Set HF_TOKEN and HF_MODEL in .env
+"""
+import os
+import json
+import re
+from openai import OpenAI
+from dotenv import load_dotenv
+from services.llm_config import provider_config
+
+
+load_dotenv(override=True)
+
+PROVIDER=os.getenv("PROVIDER", "HUGGINGFACE")
+
+try:
+    API_KEY = os.getenv(provider_config[PROVIDER]["API_KEY"])
+    BASE_URL = os.getenv(provider_config[PROVIDER]["BASE_URL"])
+    MODEL = os.getenv(provider_config[PROVIDER]["MODEL"])
+
+    if not API_KEY or not BASE_URL or not MODEL:
+        raise EnvironmentError(
+            f"Missing environment variables for {PROVIDER}"
+        )
+
+    print(f"Using {PROVIDER} provider, Model: {MODEL}")
+
+except KeyError as e:
+    raise EnvironmentError(
+        f"Invalid provider config: {e}"
+    )
+
+_client: OpenAI | None = None
+
+
+def get_client() -> OpenAI:
+    global _client
+    if _client is None:
+        _client = OpenAI(
+            base_url=BASE_URL,
+            api_key=API_KEY,
+        )
+        print("LLM client initialised!")
+    return _client
+
+
+def _chat(messages: list[dict[str, str]], max_tokens: int = 1024, temperature: float = 0.4) -> str:
+    client = get_client()
+    resp = client.chat.completions.create(
+        model=MODEL,
+        messages=messages,
+        max_tokens=max_tokens,
+        temperature=temperature,
+    )
+    return resp.choices[0].message.content.strip()
+
+def _extract_json(text: str) -> dict | list:
+    """Pull the first JSON object or array out of a model response."""
+    match = re.search(r"(\{[\s\S]*\}|\[[\s\S]*\])", text)
+    if match:
+        return json.loads(match.group(1))
+    raise ValueError(f"No JSON found in model output:\n{text}")
+
+
+# ---------------------------------------------------------------------------
+# LLM Call 1 — Resume analysis & scoring data extraction
+# ---------------------------------------------------------------------------
+def analyse_resume(resume_text: str, role: dict) -> dict:
+    
+    required_skills = [s["name"] for s in role["scoring_config"]["skills"]]
+    
+    prompt = f"""You are an expert technical recruiter. Analyse the resume below for the role of "{role['title']}".
+
+Required skills to look for: {", ".join(required_skills)}
+
+Return ONLY a JSON object with this exact shape:
+{{
+  "skills_found": ["skill1", "skill2"],
+  "years_experience": <integer>,
+  "has_relevant_degree": <true|false>,
+  "employment_gaps_over_12m": <integer count>,
+  "job_count_last_2yr": <integer>,
+  "candidate_name": "<full name or 'Unknown'>",
+  "summary": "<2-sentence profile summary>"
+}}
+
+Resume:
+{resume_text[:4000]}
+"""
+    raw = _chat([{"role": "user", "content": prompt}])
+    return _extract_json(raw)
+
+
+# ---------------------------------------------------------------------------
+# LLM Call 2 — Interview question generation
+# ---------------------------------------------------------------------------
+def generate_interview_questions(candidate_analysis: dict, role: dict) -> list[dict]:
+    """
+    Returns list of {type, category, question, follow_up}
+    """
+    skills = ", ".join(candidate_analysis.get("skills_found", []))
+    prompt = f"""You are a senior technical interviewer. Generate 10 interview questions for a candidate applying for "{role['title']}".
+
+Candidate skills: {skills}
+Years of experience: {candidate_analysis.get('years_experience', '?')}
+
+Generate a mix: 4 technical, 3 behavioural, 2 situational, 1 culture-fit.
+
+Return ONLY a JSON array of objects:
+[
+  {{
+    "type": "Technical",
+    "category": "Machine Learning",
+    "question": "...",
+    "follow_up": "..."
+  }}
+]
+"""
+    raw = _chat([{"role": "user", "content": prompt}], max_tokens=1200)
+    result = _extract_json(raw)
+    return result if isinstance(result, list) else []
+
+
+# ---------------------------------------------------------------------------
+# LLM Call 3 — Rejection feedback
+# ---------------------------------------------------------------------------
+def generate_rejection_feedback(candidate_analysis: dict, role: dict, score: int) -> dict:
+    """
+    Returns {reason, improvement_suggestions: [str]}
+    """
+    prompt = f"""You are a compassionate HR professional. A candidate scored {score}% for the role "{role['title']}" and did not meet the threshold.
+
+Candidate skills found: {', '.join(candidate_analysis.get('skills_found', []))}
+Years of experience: {candidate_analysis.get('years_experience', '?')}
+Required skills for role: {', '.join(s['name'] for s in role['scoring_config']['skills'])}
+
+Write a polite, constructive response. Return ONLY JSON:
+{{
+  "reason": "<2-sentence polite explanation>",
+  "improvement_suggestions": ["suggestion 1", "suggestion 2", "suggestion 3"]
+}}
+"""
+    raw = _chat([{"role": "user", "content": prompt}], max_tokens=512)
+    return _extract_json(raw)
+
+
+# ---------------------------------------------------------------------------
+# LLM Call 4 — Recruiter summary
+# ---------------------------------------------------------------------------
+def generate_recruiter_summary(candidate_analysis: dict, role: dict, score: int) -> str:
+    prompt = f"""You are a recruitment assistant. Write a concise 3-sentence summary for a busy recruiter about this candidate for "{role['title']}".
+
+Score: {score}%
+Skills: {', '.join(candidate_analysis.get('skills_found', []))}
+Experience: {candidate_analysis.get('years_experience', '?')} years
+Degree: {'Yes' if candidate_analysis.get('has_relevant_degree') else 'No'}
+
+Focus on: top strengths, key gaps, and overall recommendation. Be direct.
+Return plain text only, no JSON.
+"""
+    return _chat([{"role": "user", "content": prompt}], max_tokens=256)
