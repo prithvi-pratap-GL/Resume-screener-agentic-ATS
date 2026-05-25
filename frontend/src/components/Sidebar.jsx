@@ -1,7 +1,8 @@
 import { NavLink } from 'react-router-dom';
 import { LayoutDashboard, FileText, Users, BriefcaseBusiness, Settings, BarChart3, ShieldCheck } from 'lucide-react';
 import './Sidebar.css';
-import DarkModeToggle from '../DarkModeToggle';
+import DarkModeToggle from './DarkModeToggle.jsx';
+import './DarkModeToggle.css';
 
 const nav = [
   { label: 'Workflow', items: [

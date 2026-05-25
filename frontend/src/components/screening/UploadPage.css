@@ -1,17 +1,135 @@
-.upload-card { background: #fff; border: 0.5px solid #e0dfd8; border-radius: 12px; padding: 24px; display: flex; flex-direction: column; gap: 18px; }
-.field-row { display: flex; flex-direction: column; gap: 6px; }
-.field-label { font-size: 12px; color: #888; }
-.field-select { padding: 8px 10px; border: 0.5px solid #ccc; border-radius: 8px; font-size: 13px; background: #fff; }
-.dropzone { border: 1.5px dashed #ccc; border-radius: 10px; padding: 36px 20px; text-align: center; cursor: pointer; transition: border-color 0.15s, background 0.15s; display: flex; flex-direction: column; align-items: center; gap: 8px; }
-.dropzone.active { border-color: #185FA5; background: #f0f5fb; }
-.drop-title { font-size: 14px; font-weight: 500; color: #333; }
-.drop-sub { font-size: 12px; color: #aaa; }
-.file-list { display: flex; flex-direction: column; gap: 6px; }
-.file-item { display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: #faf9f7; border-radius: 8px; font-size: 13px; }
-.file-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.file-status { display: flex; align-items: center; }
-.status-pending { font-size: 11px; color: #aaa; }
-.status-error { cursor: help; }
-.upload-actions { display: flex; gap: 8px; }
-.spin { animation: spin 0.7s linear infinite; }
-@keyframes spin { to { transform: rotate(360deg); } }
+.upload-card {
+  background: var(--card-bg);
+  border: 0.5px solid var(--border-color);
+  border-radius: 12px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+/* Fields */
+
+.field-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field-label {
+  font-size: 12px;
+  color: var(--muted-text);
+}
+
+.field-select {
+  padding: 8px 10px;
+  border: 0.5px solid var(--btn-border);
+  border-radius: 8px;
+  font-size: 13px;
+  background: var(--card-bg);
+  color: var(--text-color);
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.field-select:focus {
+  outline: none;
+  border-color: #185FA5;
+  box-shadow: 0 0 0 2px rgba(24, 95, 165, 0.15);
+}
+
+/* Dropzone */
+
+.dropzone {
+  border: 1.5px dashed var(--btn-border);
+  border-radius: 10px;
+  padding: 36px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  background: var(--card-bg);
+}
+
+.dropzone:hover {
+  background: var(--hover-bg);
+}
+
+.dropzone.active {
+  border-color: #185FA5;
+  background: rgba(24, 95, 165, 0.10);
+}
+
+.drop-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-color);
+}
+
+.drop-sub {
+  font-size: 12px;
+  color: var(--light-text);
+}
+
+/* File List */
+
+.file-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.file-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--hover-bg);
+  border-radius: 8px;
+  font-size: 13px;
+  color: var(--text-color);
+}
+
+.file-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.file-status {
+  display: flex;
+  align-items: center;
+}
+
+.status-pending {
+  font-size: 11px;
+  color: var(--light-text);
+}
+
+.status-error {
+  cursor: help;
+  color: #E24B4A;
+}
+
+/* Actions */
+
+.upload-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* Spinner */
+
+.spin {
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

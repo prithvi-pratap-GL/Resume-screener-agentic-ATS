@@ -1,4 +1,4 @@
-.badge { display: inline-flex; align-items: center; padding: 3px 9px; border-radius: 999px; font-size: 11px; font-weight: 500; }
+/* .badge { display: inline-flex; align-items: center; padding: 3px 9px; border-radius: 999px; font-size: 11px; font-weight: 500; }
 .badge-green  { background: #EAF3DE; color: #27500A; }
 .badge-blue   { background: #E6F1FB; color: #0C447C; }
 .badge-amber  { background: #FAEEDA; color: #633806; }
@@ -34,4 +34,214 @@ button.btn:hover { background: #f0efe9; }
 button.btn-primary { background: #185FA5; color: #fff; border-color: #185FA5; }
 button.btn-primary:hover { background: #0C447C; }
 button.btn-danger { background: #FCEBEB; color: #791F1F; border-color: #F09595; }
-button.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+button.btn:disabled { opacity: 0.5; cursor: not-allowed; } */
+
+
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+/* Status badges stay colorful in both themes */
+.badge-green {
+  background: #EAF3DE;
+  color: #27500A;
+}
+
+.badge-blue {
+  background: #E6F1FB;
+  color: #0C447C;
+}
+
+.badge-amber {
+  background: #FAEEDA;
+  color: #633806;
+}
+
+.badge-red {
+  background: #FCEBEB;
+  color: #791F1F;
+}
+
+/* Score Bar */
+.score-bar-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.score-bar-track {
+  flex: 1;
+  height: 4px;
+  background: var(--border-color);
+  border-radius: 2px;
+  overflow: hidden;
+  min-width: 60px;
+}
+
+.score-bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.3s;
+}
+
+.score-bar-num {
+  font-size: 12px;
+  color: var(--muted-text);
+  min-width: 24px;
+  text-align: right;
+}
+
+/* Metric Cards */
+.metric-card {
+  background: var(--card-bg);
+  border-radius: 8px;
+  padding: 14px 16px;
+  transition: background 0.3s ease;
+}
+
+.metric-label {
+  font-size: 12px;
+  color: var(--light-text);
+  margin-bottom: 6px;
+}
+
+.metric-value {
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--text-color);
+}
+
+.metric-delta {
+  font-size: 11px;
+  margin-top: 3px;
+}
+
+/* Avatar */
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+/* Score Ring */
+.score-ring {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.score-ring-circle {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 3px solid;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.score-ring-val {
+  font-size: 17px;
+  font-weight: 500;
+}
+
+.score-ring-lbl {
+  font-size: 10px;
+  color: var(--light-text);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Spinner */
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--border-color);
+  border-top-color: #185FA5;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  margin: auto;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 48px 24px;
+  color: var(--light-text);
+}
+
+.empty-icon {
+  font-size: 32px;
+  margin-bottom: 12px;
+}
+
+.empty-title {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-color);
+  margin-bottom: 6px;
+}
+
+.empty-desc {
+  font-size: 13px;
+  margin-bottom: 16px;
+  color: var(--muted-text);
+}
+
+/* Buttons */
+button.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  font-size: 13px;
+  border: 0.5px solid var(--btn-border);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-color);
+  transition: background 0.12s ease, color 0.12s ease;
+}
+
+button.btn:hover {
+  background: var(--hover-bg);
+}
+
+button.btn-primary {
+  background: #185FA5;
+  color: #fff;
+  border-color: #185FA5;
+}
+
+button.btn-primary:hover {
+  background: #0C447C;
+}
+
+button.btn-danger {
+  background: #FCEBEB;
+  color: #791F1F;
+  border-color: #F09595;
+}
+
+button.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

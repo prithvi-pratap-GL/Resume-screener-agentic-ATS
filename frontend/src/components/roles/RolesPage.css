@@ -1,17 +1,142 @@
-.role-form-card { background:#fff; border:0.5px solid #e0dfd8; border-radius:12px; padding:20px; margin-bottom:16px; }
-.form-title { font-size:14px; font-weight:500; margin-bottom:14px; }
-.role-form { display:flex; flex-direction:column; gap:12px; }
-.form-row { display:flex; flex-direction:column; gap:5px; }
-.form-row label { font-size:12px; color:#888; }
-.form-row input, .form-row textarea, .form-row select { padding:8px 10px; border:0.5px solid #ccc; border-radius:8px; font-size:13px; background:#fff; resize:vertical; }
-.form-actions { display:flex; gap:8px; }
-.roles-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:12px; }
-.role-card { background:#fff; border:0.5px solid #e0dfd8; border-radius:12px; padding:16px; display:flex; flex-direction:column; gap:10px; }
-.role-card-header { display:flex; justify-content:space-between; align-items:flex-start; }
-.role-title { font-size:14px; font-weight:500; }
-.role-dept { font-size:12px; color:#888; margin-top:2px; }
-.role-desc { font-size:12px; color:#555; line-height:1.5; }
-.role-skills { display:flex; flex-wrap:wrap; gap:5px; }
-.skill-tag { font-size:11px; padding:3px 8px; border:0.5px solid #ddd; border-radius:999px; color:#555; }
-.role-meta { display:flex; justify-content:space-between; font-size:11px; color:#aaa; }
-.role-actions { display:flex; gap:8px; margin-top:2px; }
+.role-form-card {
+  background: var(--card-bg);
+  border: 0.5px solid var(--border-color);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 16px;
+  transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+.form-title {
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 14px;
+  color: var(--text-color);
+}
+
+.role-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.form-row label {
+  font-size: 12px;
+  color: var(--muted-text);
+}
+
+/* Inputs */
+
+.form-row input,
+.form-row textarea,
+.form-row select {
+  padding: 8px 10px;
+  border: 0.5px solid var(--btn-border);
+  border-radius: 8px;
+  font-size: 13px;
+  background: var(--card-bg);
+  color: var(--text-color);
+  resize: vertical;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.form-row input::placeholder,
+.form-row textarea::placeholder {
+  color: var(--light-text);
+}
+
+.form-row input:focus,
+.form-row textarea:focus,
+.form-row select:focus {
+  outline: none;
+  border-color: #185FA5;
+  box-shadow: 0 0 0 2px rgba(24, 95, 165, 0.15);
+}
+
+.form-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* Roles Grid */
+
+.roles-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+}
+
+/* Role Cards */
+
+.role-card {
+  background: var(--card-bg);
+  border: 0.5px solid var(--border-color);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+.role-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.role-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-color);
+}
+
+.role-dept {
+  font-size: 12px;
+  color: var(--muted-text);
+  margin-top: 2px;
+}
+
+.role-desc {
+  font-size: 12px;
+  color: var(--muted-text);
+  line-height: 1.5;
+}
+
+/* Skills */
+
+.role-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.skill-tag {
+  font-size: 11px;
+  padding: 3px 8px;
+  border: 0.5px solid var(--border-color);
+  border-radius: 999px;
+  color: var(--muted-text);
+  background: var(--hover-bg);
+}
+
+/* Meta */
+
+.role-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--light-text);
+}
+
+.role-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 2px;
+}

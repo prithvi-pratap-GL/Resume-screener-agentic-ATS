@@ -1,7 +1,9 @@
 .app-shell {
   display: flex;
   min-height: 100vh;
-  background: #f5f5f3;
+  background: var(--bg-color);
+  color: var(--text-color);
+  transition: background 0.3s ease;
 }
 .app-main {
   flex: 1;

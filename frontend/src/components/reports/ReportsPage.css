@@ -4,44 +4,61 @@
   gap: 10px;
   margin-bottom: 16px;
 }
+
 .stat-card {
-  background: #fff;
-  border: 0.5px solid #e0dfd8;
+  background: var(--card-bg);
+  border: 0.5px solid var(--border-color);
   border-radius: 10px;
   padding: 14px 16px;
+  transition: background 0.3s ease, border-color 0.3s ease;
 }
+
 .stat-label {
   font-size: 12px;
-  color: #888;
+  color: var(--muted-text);
   margin-bottom: 6px;
 }
+
 .stat-value {
   font-size: 22px;
   font-weight: 500;
-  color: #1a1a1a;
+  color: var(--text-color);
 }
+
+/* Charts */
+
 .charts-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 12px;
 }
+
 .chart-card {
-  background: #fff;
-  border: 0.5px solid #e0dfd8;
+  background: var(--card-bg);
+  border: 0.5px solid var(--border-color);
   border-radius: 12px;
   padding: 16px;
+  transition: background 0.3s ease, border-color 0.3s ease;
 }
+
 .chart-title {
   font-size: 13px;
   font-weight: 500;
   margin-bottom: 12px;
+  color: var(--text-color);
 }
+
+/* Empty / No Data */
+
 .no-data {
   font-size: 13px;
-  color: #aaa;
+  color: var(--light-text);
   text-align: center;
   padding: 40px 0;
 }
+
+/* Center */
+
 .center-fill {
   display: flex;
   align-items: center;

@@ -4,28 +4,35 @@
   flex: 1;
   min-width: 0;
 }
+
 .topbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 12px 20px;
-  border-bottom: 0.5px solid #e0dfd8;
-  background: #fff;
+  border-bottom: 0.5px solid var(--border-color);
+  background: var(--card-bg);
+  transition: background 0.3s ease, border-color 0.3s ease;
 }
+
 .page-title {
   font-size: 14px;
   font-weight: 500;
+  color: var(--text-color);
 }
+
 .topbar-actions {
   display: flex;
   gap: 8px;
 }
+
 .content {
   padding: 16px 20px;
   flex: 1;
   overflow: auto;
 }
 
+/* Metrics */
 .metrics-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -33,89 +40,115 @@
   margin-bottom: 16px;
 }
 
+/* Panels */
 .pipeline-panels {
   display: grid;
   grid-template-columns: 1fr 300px;
   gap: 12px;
 }
+
 .panel {
-  background: #fff;
-  border: 0.5px solid #e0dfd8;
+  background: var(--card-bg);
+  border: 0.5px solid var(--border-color);
   border-radius: 12px;
   overflow: hidden;
+  transition: background 0.3s ease, border-color 0.3s ease;
 }
+
 .panel-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 12px 16px;
-  border-bottom: 0.5px solid #e0dfd8;
+  border-bottom: 0.5px solid var(--border-color);
 }
+
 .panel-title {
   font-size: 13px;
   font-weight: 500;
+  color: var(--text-color);
 }
 
+/* Filter Tabs */
 .filter-tabs {
   display: flex;
   gap: 0;
 }
+
 .filter-tab {
   padding: 4px 10px;
   font-size: 12px;
-  color: #888;
+  color: var(--light-text);
   background: none;
   border: none;
   cursor: pointer;
   border-radius: 6px;
+  transition: background 0.12s ease, color 0.12s ease;
 }
+
+.filter-tab:hover {
+  background: var(--hover-bg);
+  color: var(--text-color);
+}
+
 .filter-tab.active {
   background: #e6f1fb;
   color: #0c447c;
   font-weight: 500;
 }
 
+/* Table Head */
 .table-head {
   display: grid;
   grid-template-columns: 36px 1fr 110px 80px 90px;
   gap: 10px;
   padding: 8px 16px;
-  background: #faf9f7;
-  border-bottom: 0.5px solid #e0dfd8;
+  background: var(--bg-color);
+  border-bottom: 0.5px solid var(--border-color);
   font-size: 11px;
-  color: #aaa;
+  color: var(--light-text);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
+
+/* Candidate Rows */
 .candidate-row {
   display: grid;
   grid-template-columns: 36px 1fr 110px 80px 90px;
   gap: 10px;
   align-items: center;
   padding: 10px 16px;
-  border-bottom: 0.5px solid #f0efe9;
+  border-bottom: 0.5px solid var(--hover-bg);
   cursor: pointer;
-  transition: background 0.12s;
+  transition: background 0.12s ease;
 }
+
 .candidate-row:last-child {
   border-bottom: none;
 }
+
 .candidate-row:hover {
-  background: #faf9f7;
+  background: var(--hover-bg);
 }
+
 .candidate-row.selected {
-  background: #f0f5fb;
+  background: rgba(24, 95, 165, 0.12);
 }
+
+/* Candidate Text */
 .cname {
   font-size: 13px;
   font-weight: 500;
+  color: var(--text-color);
 }
+
 .crole {
   font-size: 11px;
-  color: #888;
+  color: var(--muted-text);
   margin-top: 1px;
 }
+
 .exp-text {
   font-size: 12px;
-  color: #888;
+  color: var(--muted-text);
 }
