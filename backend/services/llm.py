@@ -63,6 +63,45 @@ def _extract_json(text: str) -> dict | list:
     raise ValueError(f"No JSON found in model output:\n{text}")
 
 
+ALLOWED_COMPETENCIES = {
+    "technical_depth",
+    "problem_solving",
+    "communication",
+    "leadership",
+    "ownership",
+    "system_design",
+    "collaboration",
+    "adaptability",
+}
+
+
+def _normalise_questions(questions: list[dict]) -> list[dict]:
+    cleaned = []
+
+    for q in questions:
+        comps = q.get("competencies", [])
+
+        comps = [
+            c.lower().replace(" ", "_")
+            for c in comps
+            if c.lower().replace(" ", "_")
+            in ALLOWED_COMPETENCIES
+        ]
+
+        if not comps:
+            comps = ["technical_depth"]
+
+        cleaned.append({
+            "type": q.get("type", "Technical"),
+            "category": q.get("category", "General"),
+            "question": q.get("question", ""),
+            "follow_up": q.get("follow_up", ""),
+            "competencies": comps
+        })
+
+    return cleaned
+
+
 # ---------------------------------------------------------------------------
 # LLM Call 1 — Resume analysis & scoring data extraction
 # ---------------------------------------------------------------------------
@@ -97,29 +136,85 @@ Resume:
 # ---------------------------------------------------------------------------
 def generate_interview_questions(candidate_analysis: dict, role: dict) -> list[dict]:
     """
-    Returns list of {type, category, question, follow_up}
+    Returns interview intelligence question objects.
     """
+
     skills = ", ".join(candidate_analysis.get("skills_found", []))
-    prompt = f"""You are a senior technical interviewer. Generate 10 interview questions for a candidate applying for "{role['title']}".
+    role_skills = ", ".join(
+        s["name"]
+        for s in role["scoring_config"]["skills"]
+    )
 
-Candidate skills: {skills}
-Years of experience: {candidate_analysis.get('years_experience', '?')}
+    prompt = f"""
+You are a senior technical interviewer.
 
-Generate a mix: 4 technical, 3 behavioural, 2 situational, 1 culture-fit.
+Generate 10 HIGH-QUALITY interview questions for a candidate applying for:
 
-Return ONLY a JSON array of objects:
+Role: {role['title']}
+
+Candidate skills:
+{skills}
+
+Role skills:
+{role_skills}
+
+Experience:
+{candidate_analysis.get('years_experience', '?')} years
+
+Generate:
+
+- 4 technical validation
+- 2 project deep-dive
+- 2 behavioural
+- 1 situational
+- 1 risk / weakness probe
+
+Questions should be:
+
+- role-specific
+- resume-grounded
+- not generic
+- include follow-up
+
+Return ONLY JSON array:
+
 [
   {{
-    "type": "Technical",
-    "category": "Machine Learning",
-    "question": "...",
-    "follow_up": "..."
+    "type":"Technical",
+    "category":"Backend",
+    "question":"...",
+    "follow_up":"...",
+    "competencies":[
+      "technical_depth",
+      "problem_solving"
+    ]
   }}
 ]
+
+Allowed competencies:
+
+technical_depth
+problem_solving
+communication
+leadership
+ownership
+system_design
+collaboration
+adaptability
 """
-    raw = _chat([{"role": "user", "content": prompt}], max_tokens=1200)
+    raw = _chat(
+        [{"role":"user","content":prompt}],
+        max_tokens=1600,
+        temperature=0.4
+    )
+
     result = _extract_json(raw)
-    return result if isinstance(result, list) else []
+
+    if not isinstance(result, list):
+        return []
+
+    return _normalise_questions(result)
+
 
 
 # ---------------------------------------------------------------------------

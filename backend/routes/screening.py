@@ -25,6 +25,7 @@ def screen_resume():
     role = get_role(role_id)
     if not role:
         return jsonify({"error": "Role not found"}), 404
+    
 
     # 1. Parse resume
     raw_bytes = file.read()
@@ -33,21 +34,26 @@ def screen_resume():
     except ValueError as e:
         return jsonify({"error": str(e)}), 400
 
+
     # 2. LLM Call 1 — structured analysis
     try:
         analysis = analyse_resume(resume_text, role)
     except Exception as e:
         return jsonify({"error": f"LLM analysis failed: {e}"}), 500
+    
 
     # 3. Score
     score_breakdown = calculate_score(analysis, role)
     shortlisted = score_breakdown["shortlisted"]
+
 
     # 4. LLM Call 4 — recruiter summary (always)
     try:
         recruiter_summary = generate_recruiter_summary(analysis, role, score_breakdown["overall"])
     except Exception:
         recruiter_summary = "Summary unavailable."
+        
+        
 
     # 5. LLM Call 2 or 3 — interview questions or rejection feedback
     interview_questions = []
@@ -73,6 +79,7 @@ def screen_resume():
         if anonymise
         else analysis.get("candidate_name", file.filename)
     )
+    
 
     candidate = save_candidate({
         "name": display_name,
@@ -84,6 +91,7 @@ def screen_resume():
         "status": "Shortlisted" if shortlisted else "Rejected",
         "recruiter_summary": recruiter_summary,
         "interview_questions": interview_questions,
+        "interview_profile": {},
         "rejection_feedback": rejection_feedback,
     })
 
