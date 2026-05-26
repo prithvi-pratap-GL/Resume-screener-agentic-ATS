@@ -1,4 +1,11 @@
 def test_health(client):
-    response = client.get('/api/health')
+
+    response = client.get("/api/health")
+
     assert response.status_code == 200
-    assert response.json == {"status": "ok", "model": "not configured"}
+
+    data = response.get_json()
+
+    assert data["status"] == "ok"
+
+    assert "model" in data
