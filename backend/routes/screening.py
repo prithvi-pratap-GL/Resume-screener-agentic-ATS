@@ -8,6 +8,7 @@ from services.llm import (
     generate_rejection_feedback,
     generate_recruiter_summary,
 )
+from services.privacy import scrub_pii
 
 screen_bp = Blueprint("screen", __name__)
 
@@ -31,13 +32,19 @@ def screen_resume():
     raw_bytes = file.read()
     try:
         resume_text = extract_text(raw_bytes, file.filename)
+
+        #PII scrubbing
+        safe_resume_text = scrub_pii(resume_text)
+        print("\n--- ANONYMIZED RESUME ---\n")
+        print(safe_resume_text[:1000])
+
     except ValueError as e:
         return jsonify({"error": str(e)}), 400
 
 
     # 2. LLM Call 1 — structured analysis
     try:
-        analysis = analyse_resume(resume_text, role)
+        analysis = analyse_resume(safe_resume_text, role)
     except Exception as e:
         return jsonify({"error": f"LLM analysis failed: {e}"}), 500
     

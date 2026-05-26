@@ -2,7 +2,7 @@ import uuid
 from datetime import datetime
 
 # ---------------------------------------------------------------------------
-# In-memory stores (replace with a DB in production)
+# In-memory stores (future implementattion : DB integration)
 # ---------------------------------------------------------------------------
 _roles: dict = {}
 _candidates: dict = {}

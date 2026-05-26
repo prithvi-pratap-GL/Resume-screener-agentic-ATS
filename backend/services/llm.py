@@ -8,6 +8,8 @@ import re
 from openai import OpenAI
 from dotenv import load_dotenv
 from services.llm_config import provider_config
+from schemas.analysis_schema import (ResumeAnalysisSchema)
+from pydantic import ValidationError
 
 
 load_dotenv(override=True)
@@ -128,7 +130,25 @@ Resume:
 {resume_text[:4000]}
 """
     raw = _chat([{"role": "user", "content": prompt}])
-    return _extract_json(raw)
+    result=_extract_json(raw)
+
+    #validation part: pydantic guardrail
+    try:
+
+        validated = (
+            ResumeAnalysisSchema
+            .model_validate(
+                result
+            )
+        )
+
+        return validated.model_dump()
+
+    except ValidationError as e:
+
+        raise ValueError(
+            f"LLM schema validation failed: {e}"
+        )
 
 
 # ---------------------------------------------------------------------------
