@@ -1,12 +1,13 @@
 from flask import Blueprint, request, jsonify
 from models.store import (
-    create_role, get_all_roles, get_role,
-    update_role, delete_role,
+    create_role,
+    get_all_roles,
+    get_role,
+    update_role,
+    delete_role,
 )
 from services.scraper import suggest_skills, collect_market_text
 from services.llm import generate_role_config
-
-
 
 roles_bp = Blueprint("roles", __name__)
 
@@ -74,18 +75,11 @@ def auto_generate_role():
         market_text = collect_market_text(job_title)
 
         if not market_text.strip():
-            return jsonify({
-                "error": "No market data found"
-            }), 400
+            return jsonify({"error": "No market data found"}), 400
 
-        result = generate_role_config(
-            job_title,
-            market_text
-        )
+        result = generate_role_config(job_title, market_text)
 
         return jsonify(result)
 
     except Exception as e:
-        return jsonify({
-            "error": str(e)
-        }), 500
+        return jsonify({"error": str(e)}), 500
