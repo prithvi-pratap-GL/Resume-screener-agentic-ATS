@@ -57,12 +57,123 @@ def _chat(messages: list[dict[str, str]], max_tokens: int = 1024, temperature: f
     )
     return resp.choices[0].message.content.strip()
 
+
 def _extract_json(text: str) -> dict | list:
     """Pull the first JSON object or array out of a model response."""
     match = re.search(r"(\{[\s\S]*\}|\[[\s\S]*\])", text)
     if match:
         return json.loads(match.group(1))
     raise ValueError(f"No JSON found in model output:\n{text}")
+
+
+def judge_and_revise(text: str,content_type: str = "general",max_retries: int = 2):
+
+    current = text
+
+    for _ in range(
+        max_retries + 1
+    ):
+
+        judge_prompt = f"""
+            You are an AI safety and professionalism judge.
+
+            Evaluate this {content_type}.
+
+            APPROVE only if it is:
+
+            - professional
+            - non-toxic
+            - non-discriminatory
+            - role relevant
+            - safe for hiring workflows
+            - not vulgar or offensive
+
+            Reject if:
+
+            - abusive
+            - hateful
+            - discriminatory
+            - vulgar
+            - sexually explicit
+            - irrelevant
+            - inferior question quality
+
+            Return ONLY JSON:
+
+            {{
+            "approved": true|false,
+            "feedback": "<short reason>"
+            }}
+
+            TEXT:
+            {current}
+            """
+
+        raw = _chat(
+            [{
+                "role": "user",
+                "content":
+                    judge_prompt
+            }],
+            temperature=0
+        )
+
+        result = (
+            _extract_json(
+                raw
+            )
+        )
+
+        approved = (result.get("approved",False)
+                    
+            if isinstance(result,dict) else False
+        )
+
+        if approved:
+            return current
+
+        feedback = (
+            result.get(
+                "feedback",
+                "Did not meet review."
+            )
+            if isinstance(
+                result,
+                dict
+            )
+            else "Did not meet review."
+        )
+
+        revise_prompt = f"""
+            You previously generated a {content_type}.
+
+            It failed review.
+
+            Feedback:
+            {feedback}
+
+            Rewrite it professionally and safely.
+
+            Return ONLY revised text.
+
+            TEXT:
+            {current}
+            """
+
+        current = _chat(
+            [
+                {
+                    "role":"system",
+                    "content":"You rewrite content professionally and safely."
+                },
+                {
+                    "role":"user",
+                    "content":revise_prompt
+                }
+            ]
+        )
+
+    return None
 
 
 ALLOWED_COMPETENCIES = {
